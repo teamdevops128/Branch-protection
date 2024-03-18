@@ -1,0 +1,1 @@
+ Packer with Azure App Services to create custom images or artifacts for deploying applications onto the App Services platform. Packer is a tool from HashiCorp that allows you to automate the creation of machine images for various platforms, including Azure. Here's how you can use Packer with Azure App Services:
