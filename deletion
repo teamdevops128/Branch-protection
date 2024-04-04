@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# GitHub username and token (replace these with your own)
+USERNAME="your_username"
+TOKEN="your_token"
+
+# Organization name
+ORG_NAME="your_organization_name"
+
+# Function to delete a repository
+delete_repository() {
+    local repo_name=$1
+    echo "Deleting repository: $repo_name"
+    curl -X DELETE -u "$USERNAME:$TOKEN" "https://api.github.com/repos/$ORG_NAME/$repo_name"
+}
+
+# Read repository names from CSV file and delete them
+while IFS=, read -r repo_name; do
+    delete_repository "$repo_name"
+done < repos.csv
+
+echo "All repositories deleted from organization: $ORG_NAME"
