@@ -1,13 +1,16 @@
-response=$(curl -s -H "Authorization: token $TOKEN" "$GITHUB_URL/orgs/$ORG_NAME/members")
+GITHUB_API="https://api.github.com"
 
-# Check if the request was successful
+# Organization name
+ORG_NAME="Somatus-inc"
+OUTPUT_CSV="github_user_details.csv"
+response=$(curl -s -H "Authorization: token $TOKEN" "$GITHUB_API/orgs/$ORG_NAME/members")
 if [ $? -eq 0 ]; then
-    # Parse JSON response to extract user details
-    user_details=$(echo "$response" | jq -r '.[] | {login: .login, name: .name, email: .email}')
+    # Parse JSON response to extract user details and format as CSV
+    echo "login,name,email" > "$OUTPUT_CSV"
+    echo "$response" | jq -r '.[] | [.login, .name, .email] | @csv' >> "$OUTPUT_CSV"
 
-    # Display user details
-    echo "User details for Organization: $ORG_NAME"
-    echo "$user_details"
+    # Display success message
+    echo "User details saved to $OUTPUT_CSV"
 else
     echo "Failed to fetch user details. Check your settings and try again."
 fi
