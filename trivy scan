@@ -1,0 +1,19 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: |
+    #!/bin/bash
+      curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+  displayName: 'install trivy'
+  
+- script: |
+    #!/bin/bash
+
+      docker --version
+      trivy_version=$(trivy --version | awk '{print$2}')
+      echo "Trivy version is $trivy_version"
+  displayName: 'docker and trivy version'
