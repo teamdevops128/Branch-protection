@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# GitHub Enterprise URL
+GITHUB_URL="https://github.yourdomain.com/api/v3"
+
+# Personal Access Token (Replace <PAT> with your actual token)
+TOKEN="<PAT>"
+
+# Organization and Repository Details
+ORG="your-organization"
+REPO="your-repository"
+
+# Enable Dependabot alerts using GitHub API and save output to CSV
+curl -X PUT \
+  -H "Authorization: token $TOKEN" \
+  -H "Accept: application/vnd.github.v3+json" \
+  "$GITHUB_URL/repos/$ORG/$REPO/vulnerability-alerts" > output.csv
+
+echo "Dependabot alerts enabled for $ORG/$REPO. Output saved to output.csv."
