@@ -1,0 +1,17 @@
+#!/bin/bash
+
+GITHUB_URL="https://api.github.com/repos"
+ORG="S-inc"
+OUTPUT_FILE="output.csv"
+
+while IFS=',' read -r REPO; do
+  echo "Processing repository: $REPO"
+
+  response=$(curl -X PUT \
+    -H "Authorization: token $TOKEN" \
+    -H "Accept: application/vnd.github.v3+json" \
+    "$GITHUB_URL/$ORG/$REPO/vulnerability-alerts" )
+
+  timestamp=$(date +"%Y-%m-%d %T")
+  echo "$timestamp,$ORG,$REPO,$response" >> "$OUTPUT_FILE"
+done < <(tail -n +2 repositories.csv)
