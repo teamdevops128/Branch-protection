@@ -17,3 +17,16 @@ curl -X PUT \
   "$GITHUB_URL/repos/$ORG/$REPO/vulnerability-alerts" > output.csv
 
 echo "Dependabot alerts enabled for $ORG/$REPO. Output saved to output.csv."
+
+
+
+
+
+
+
+
+curl -X PUT "https://api.github.com/repos/$OWNER/$REPO/vulnerability-alerts" \
+  -H "Authorization: token $TOKEN" \
+  -H "Accept: application/vnd.github.dorian-preview+json" \
+  -H "Content-Type: application/json" \
+  -d '{"enabled": true}'
