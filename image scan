@@ -1,0 +1,1 @@
+jq -r '.[].Vulnerabilities[] | [.VulnerabilityID, .PkgName, .InstalledVersion, .FixedVersion, .Severity, .Title, .Description, .References] | @csv' "${json_output_file}" > "${csv_output_file}"
