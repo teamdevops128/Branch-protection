@@ -1,0 +1,63 @@
+import requests
+import csv
+
+# Replace these with your details
+ORG_NAME = 'your_organization_name'
+
+headers = {
+    'Authorization': f'token (TOKEN)',
+    'Accept': 'application/vnd.github+json'
+}
+
+def get_repositories(org_name):
+    url = f'https://api.github.com/orgs/{org_name}/repos'
+    repos = []
+    while url:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        repos.extend(response.json())
+        url = response.links.get('next', {}).get('url')
+    return repos
+
+def get_dependabot_alerts(owner, repo):
+    url = f'https://api.github.com/repos/{owner}/{repo}/dependabot/alerts'
+    alerts = []
+    while url:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        alerts.extend(response.json())
+        url = response.links.get('next', {}).get('url')
+    return alerts
+
+def main():
+    repos = get_repositories(ORG_NAME)
+    all_alerts = []
+
+    for repo in repos:
+        repo_name = repo['name']
+        print(f'Fetching alerts for repository: {repo_name}')
+        alerts = get_dependabot_alerts(ORG_NAME, repo_name)
+        for alert in alerts:
+            alert_info = {
+                'repository': repo_name,
+                'alert_id': alert['number'],
+                'severity': alert['security_advisory']['severity'],
+                'package': alert['security_advisory']['package']['name'],
+                'summary': alert['security_advisory']['summary'],
+                'url': alert['html_url']
+            }
+            all_alerts.append(alert_info)
+
+    # Define the CSV file name
+    csv_file = 'dependabot_alerts.csv'
+
+    # Write to the CSV file
+    with open(csv_file, mode='w', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames=['repository', 'alert_id', 'severity', 'package', 'summary', 'url'])
+        writer.writeheader()
+        writer.writerows(all_alerts)
+
+    print(f"Dependabot alerts have been written to {csv_file}")
+
+if __name__ == '__main__':
+    main()
