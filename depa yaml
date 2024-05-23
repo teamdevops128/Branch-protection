@@ -1,0 +1,25 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install requests
+  displayName: 'Install dependencies'
+
+- script: |
+    python dependabot_alerts.py
+  displayName: 'Run Python script'
+  env:
+    GITHUB_TOKEN: $(GITHUB_TOKEN)
