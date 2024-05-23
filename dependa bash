@@ -1,0 +1,48 @@
+# GitHub token and organization name should be passed as environment variables
+GITHUB_TOKEN=${GITHUB_TOKEN}
+ORG_NAME="Somatus-inc"  # Replace with your organization name
+
+if [ -z "$GITHUB_TOKEN" ]; then
+  echo "Error: GITHUB_TOKEN environment variable is not set."
+  exit 1
+fi
+
+# GitHub API URL to fetch Dependabot alerts for the organization
+API_URL="https://api.github.com/orgs/${ORG_NAME}/dependabot/alerts"
+
+# Temporary file to store the JSON response
+TEMP_FILE="dependabot_alerts.json"
+
+# Function to fetch Dependabot alerts
+fetch_dependabot_alerts() {
+  local url=$1
+  curl -s -H "Authorization: token ${GITHUB_TOKEN}" -H "Accept: application/vnd.github+json" "$url" > "$TEMP_FILE"
+}
+
+# Fetch alerts and store in TEMP_FILE
+fetch_dependabot_alerts "$API_URL"
+
+# Check if jq is installed
+if ! command -v jq &> /dev/null
+then
+    echo "jq could not be found, please install jq to continue."
+    exit
+fi
+
+# Extract alerts and write to CSV file
+jq -r '.[] | [
+    .repository.name,
+    .number,
+    .security_advisory.severity,
+    .security_advisory.package.name,
+    .security_advisory.summary,
+    .html_url
+] | @csv' "$TEMP_FILE" > dependabot_alerts.csv
+
+# Add header to the CSV file
+sed -i '1irepository,alert_id,severity,package,summary,url' dependabot_alerts.csv
+
+# Cleanup
+rm "$TEMP_FILE"
+
+echo "Dependabot alerts have been written to dependabot_alerts.csv"
