@@ -1,6 +1,6 @@
 # GitHub token and organization name should be passed as environment variables
 GITHUB_TOKEN=${GITHUB_TOKEN}
-ORG_NAME="Somatus-inc"  # Replace with your organization name
+ORG_NAME="ORG_NAME"  # Replace with your organization name
 
 if [ -z "$GITHUB_TOKEN" ]; then
   echo "Error: GITHUB_TOKEN environment variable is not set."
