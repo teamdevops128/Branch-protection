@@ -1,5 +1,5 @@
 trigger:
-- main
+- main  # or the branch you want to trigger the pipeline
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -10,7 +10,7 @@ variables:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.x'
+    versionSpec: '3.x'  # Use the appropriate Python version
     addToPath: true
 
 - script: |
@@ -23,3 +23,8 @@ steps:
   displayName: 'Run Python script'
   env:
     GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: 'dependabot_alerts.csv'  # Path to the file you want to publish
+    artifact: 'DependabotAlerts'  # Name of the artifact
